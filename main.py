@@ -8,11 +8,7 @@ import threading
 
 PRODUCT_URL = "https://vladivostok.e2e4online.ru/catalog/noutbuki-42/"
 
-app = FastAPI(title="parser",
-              version="0.0.1",
-              # docs_url=None,
-              redoc_url=None,
-              )
+app = FastAPI(title="parser")
 
 
 origins = [
@@ -32,16 +28,14 @@ app.add_middleware(
 )
 
 
-@app.get("/get/products", tags=["fetch"])
-async def fetch():
+@app.get("/get/products")
+async def get():
     items = get_items_from_database()
     return items
-    # return await update_db()
 
 
 async def update_db():
     try:
-        # requests solution
         page = requests.get(url=PRODUCT_URL)
         html = page.text
 
@@ -67,8 +61,8 @@ async def update_db():
         raise HTTPException(status_code=400, detail="Couldn't update storage")
 
 
-@app.post("/add")
-async def add(title: str, price: int, code: int):
+@app.post("/post")
+async def post(title: str, price: int, code: int):
     try:
         form = Product(id=code, title=title, price=price)
         add_to_database(form)
